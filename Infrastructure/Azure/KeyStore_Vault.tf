@@ -10,7 +10,7 @@ data "azurerm_client_config" "current" {}
 
 resource "DeepDriver_ResourceGroup" "example" {
   name     = "DeepDriver_ResourceGroup"
-  location = "West US"
+  location = "westeurope"
 }
 
 resource "azurerm_key_vault" "example" {
