@@ -4,6 +4,12 @@ provider "azurerm" {
     features {}
 }
 
+# variables
+variable DeploySoftware{
+    type = string
+    default = "DeploySoftware.ps1"
+}
+
 # Create a resource group if it doesn't exist
 resource "azurerm_resource_group" "DeepDriver_ResourceGroup" {
     name     = "DeepDriver_ResourceGroup"
@@ -123,7 +129,7 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     location              = "westeurope"
     resource_group_name   = azurerm_resource_group.DeepDriver_ResourceGroup.name
     network_interface_ids = [azurerm_network_interface.DeepDriver_NIC.id]
-    size                  = "Standard_NC6" 
+    size                  = "Standard NC6_Promo" 
     # https://docs.microsoft.com/de-de/azure/virtual-machines/nc-series?toc=/azure/virtual-machines/linux/toc.json&bc=/azure/virtual-machines/linux/breadcrumb/toc.json
     computer_name         = "DeepDriverVM"
     admin_username        = "azureuser"
@@ -156,12 +162,15 @@ resource "azurerm_virtual_machine_extension" "Powershell-Extension" {
     depends_on=[azurerm_windows_virtual_machine.DeepDriverVM]
     name = "Powershell-Extension"
     virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
-    publisher            = "Microsoft.Compute"
-    type                 = "CustomScriptExtension"
-    type_handler_version = "1.9"
-    settings = <<SETTINGS
-        { 
-        "commandToExecute": "powershell Install-WindowsFeature -name Web-Server -IncludeManagementTools;"
-        } 
-    SETTINGS
+    # publisher            = "Microsoft.Compute"
+    publisher            = "Microsoft.Azure.Extensions"
+    # type                 = "CustomScriptExtension"
+    type                 = "CustomScript"
+    # type_handler_version = "1.9"
+    type_handler_version = "2.0"
+    protected_settings = <<PROT
+    {
+        "script": "${base64encode(file(var.DeploySoftware))}"
+    }
+    PROT
 }
