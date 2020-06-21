@@ -41,10 +41,7 @@ except IndexError:
     pass
 
 import carla
-from components import World
-
-
-
+from components.World import World 
 from agents.navigation.roaming_agent import RoamingAgent  # pylint: disable=import-error
 
 
@@ -68,7 +65,7 @@ def game_loop(args):
             (args.width, args.height),
             pygame.HWSURFACE | pygame.DOUBLEBUF)
 
-        world = World.World(client.get_world(), args)
+        world = World(client.get_world(), args)
         agent = RoamingAgent(world.player)
         clock = pygame.time.Clock()
 
@@ -120,7 +117,7 @@ def main():
         metavar='H',
         #default='127.0.0.1',
         #default='nvidiaairsim.westeurope.cloudapp.azure.com',
-        default='40.115.5.103',
+        default='51.145.143.159',
         help='IP of the host server (default: 127.0.0.1)')
     argparser.add_argument(
         '-p', '--port',

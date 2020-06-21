@@ -37,7 +37,7 @@ except IndexError:
 
 import carla
 
-from components import SensorManager
+from components.SensorManager import SensorManager
 
 # ==============================================================================
 # -- World ---------------------------------------------------------------
@@ -96,7 +96,7 @@ class World(object):
             spawn_point = random.choice(spawn_points) if spawn_points else carla.Transform()
             self.player = self.world.try_spawn_actor(blueprint, spawn_point)
         # Set up the sensors.
-        self.camera_manager = SensorManager.CameraManager(self.player, self._gamma, args)
+        self.camera_manager = SensorManager(self.player, self._gamma, args)
         self.camera_manager.transform_index = cam_pos_id
         self.camera_manager.set_sensor(cam_index, notify=False)
         #self.camera_manager.set_sensor(6, notify=False)

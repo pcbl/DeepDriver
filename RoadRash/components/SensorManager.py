@@ -48,7 +48,7 @@ except IndexError:
 import carla
 from carla import ColorConverter as cc
 
-class CameraManager(object):
+class SensorManager(object):
     """ Class for camera management"""
 
     def __init__(self, parent_actor, gamma_correction, args):
@@ -119,7 +119,7 @@ class CameraManager(object):
             # We need to pass the lambda a weak reference to
             # self to avoid circular reference.
             weak_self = weakref.ref(self)
-            self.sensor.listen(lambda image: CameraManager._parse_image(weak_self, image, self.args))
+            self.sensor.listen(lambda image: SensorManager._parse_image(weak_self, image, self.args))
 
         self.index = index
 
