@@ -42,13 +42,10 @@ except IndexError:
 
 import carla
 from components.World import World 
-from agents.navigation.roaming_agent import RoamingAgent  # pylint: disable=import-error
-
 
 # ==============================================================================
 # -- Game Loop ---------------------------------------------------------
 # ==============================================================================
-
 
 def game_loop(args):
     """ Main loop for agent"""
@@ -66,7 +63,6 @@ def game_loop(args):
             pygame.HWSURFACE | pygame.DOUBLEBUF)
 
         world = World(client.get_world(), args)
-        agent = RoamingAgent(world.player)
         clock = pygame.time.Clock()
 
         while True:
@@ -86,7 +82,10 @@ def game_loop(args):
             world.tick(clock)
             world.render(display)
             pygame.display.flip()
-            control = agent.run_step()
+
+            control = carla.VehicleControl()           
+            control.throttle = 1
+            control.hand_brake = False
             control.manual_gear_shift = False
             world.player.apply_control(control)
 

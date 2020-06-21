@@ -99,7 +99,6 @@ class World(object):
         self.camera_manager = SensorManager(self.player, self._gamma, args)
         self.camera_manager.transform_index = cam_pos_id
         self.camera_manager.set_sensor(cam_index, notify=False)
-        #self.camera_manager.set_sensor(6, notify=False)
 
     def tick(self, clock):
         """Method for every tick"""
