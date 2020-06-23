@@ -4,7 +4,7 @@ param (
 
 function Install-Server {
 
-    # Download Carla
+    write-output "Download Carla"
     $DestinationFolder = "C:\Temp"
     $File = "CARLA_0.9.9.4.zip"
     $URL = "https://carla-releases.s3.eu-west-3.amazonaws.com/Windows/$File"
@@ -14,17 +14,18 @@ function Install-Server {
     $wc = New-Object net.webclient
     $wc.Downloadfile("$URL", "$DestinationFolder\$File")
 
-    # Extract Carla
+    write-output "Extract Carla"
+    $ProgressPreference = "SilentlyContinue"
     Expand-Archive -LiteralPath "$DestinationFolder\$File" -DestinationPath "$DestinationFolder"
 
 }
 
 function Install-Client {
 
-    # Install Chocolatey
+    write-output "Install Chocolatey"
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
-    # Install Anaconda
+    write-output "Install Anaconda"
     choco install anaconda3 -y
 
 }

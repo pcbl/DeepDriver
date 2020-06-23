@@ -6,20 +6,18 @@ choco install azure-cli -y
 
 write-output "authenticate on Azure..."
 az login
-Pause
+
+Set-location .\CarlaServer
 
 write-output "Initialize Terraform..."
-Set-location .\CarlaServer
 terraform init
 Pause
 
 write-output "Plan Terraform..."
-Set-location .\CarlaServer
 Terraform plan
 Pause
 
 write-output "Apply Terraform..."
-Set-location .\CarlaServer
 terraform apply -auto-approve
 Pause
 
