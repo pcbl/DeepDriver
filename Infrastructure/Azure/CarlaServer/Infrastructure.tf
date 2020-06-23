@@ -4,11 +4,11 @@ provider "azurerm" {
     features {}
 }
 
-# # variables
-# variable DeploySoftware{
-#     type = string
-#     default = "DeploySoftware.ps1"
-# }
+# variables
+variable WINRM{
+    type = string
+    default = "WINRM.ps1"
+}
 
 # Create a resource group if it doesn't exist
 resource "azurerm_resource_group" "DeepDriver_ResourceGroup" {
@@ -153,17 +153,6 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
         storage_account_uri = azurerm_storage_account.DeepDriver_storageaccount.primary_blob_endpoint
     }
 
-    provisioner "file" {
-        source      = "./DeploySoftware.ps1"
-        destination = "C:/temp/DeploySoftware.ps1"
-
-        connection {
-            type     = "winrm"
-            user     = "Administrator"
-            password = "P@$$w0rd1234!"
-            host     = "DeepDriverVM"
-        }
-    }
 
     timeouts {
         create = "60m"
@@ -173,33 +162,39 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     tags = {
         environment = "DeepDriver_TerraformInfrastructure"
     }
-
-
 }
 
-# module "run_command" {
-#   source               = "innovationnorway/vm-run-command/azurerm"
-#   resource_group_name  = azurerm_resource_group.DeepDriver_ResourceGroup.name
-#   virtual_machine_name = azurerm_windows_virtual_machine.DeepDriverVM.id
-#   os_type              = "windows"
+ # Virtual Machine Extension to Deploy Software
+ resource "azurerm_virtual_machine_extension" "Powershell-Extension" {
+    depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
+    name                 = "Powershell-Extension"
+    virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
+    publisher            = "Microsoft.Compute"
+    type                 = "CustomScriptExtension"
+    type_handler_version = "1.9"
+    protected_settings = <<PROTECTED_SETTINGS
+        {
+            "commandToExecute": "powershell.exe -Command ./Test.ps1
+        }
+    PROTECTED_SETTINGS
 
-#   command = "Set-ExecutionPolicy -ExecutionPolicy Bypass"
-# }
+    settings = <<SETTINGS
+        {
+            "fileUris": [
+            "https://github.com/pcbl/DeepDriver/blob/master/Infrastructure/Azure/CarlaServer/Test.ps1"
+            ]
+        }
+    SETTINGS
 
-# # Virtual Machine Extension to Install IIS
-# resource "azurerm_virtual_machine_extension" "Powershell-Extension" {
-#     depends_on=[azurerm_windows_virtual_machine.DeepDriverVM]
-#     name = "Powershell-Extension"
-#     virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
-#     # publisher            = "Microsoft.Compute"
-#     publisher            = "Microsoft.Azure.Extensions"
-#     # type                 = "CustomScriptExtension"
-#     type                 = "CustomScript"
-#     # type_handler_version = "1.9"
-#     type_handler_version = "2.0"
-#     protected_settings = <<PROT
-#     {
-#         "script": "${base64encode(file(var.DeploySoftware))}"
-#     }
-#     PROT
-# }
+    // provisioner "file" {
+    //     source      = "./DeploySoftware.ps1"
+    //     destination = "C:/temp/DeploySoftware.ps1"
+
+    //     connection {
+    //         type     = "winrm"
+    //         user     = "Administrator"
+    //         password = "P@$$w0rd1234!"
+    //         host     = "DeepDriverVM"
+    //     }
+
+ }

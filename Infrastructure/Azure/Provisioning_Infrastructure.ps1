@@ -21,4 +21,7 @@ write-output "Apply Terraform..."
 terraform apply -auto-approve
 Pause
 
+# write-output "Apply Terraform..."
+# terraform destroy -auto-approve
+# Pause
 
