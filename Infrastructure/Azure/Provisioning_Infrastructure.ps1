@@ -9,19 +9,18 @@ az login
 Pause
 
 write-output "Initialize Terraform..."
+Set-location .\CarlaServer
 terraform init
 Pause
 
 write-output "Plan Terraform..."
+Set-location .\CarlaServer
 Terraform plan
 Pause
 
 write-output "Apply Terraform..."
+Set-location .\CarlaServer
 terraform apply -auto-approve
 Pause
-
-# write-output "Apply Terraform..."
-# terraform destory -auto-approve
-# Pause
 
 
