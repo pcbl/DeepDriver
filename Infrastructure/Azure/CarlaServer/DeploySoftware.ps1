@@ -2,6 +2,29 @@ param (
     [String]$Environment = ""
 )
 
+function Set-WINRM {
+    Write-Output '...Activate WinRM...'
+    Write-Output '...Config...'
+    winrm quickconfig -q
+    winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="8192"}'
+    winrm set winrm/config '@{MaxTimeoutms="1800000"}'
+    winrm set winrm/config/service '@{AllowUnencrypted="true"}'
+    winrm set winrm/config/service/auth '@{Basic="true"}'
+
+    Write-Output '...Firewall'...
+    netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow
+    netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow
+
+    Write-Output '...Profile and Trusted'
+    Enable-PSRemoting -SkipNetworkProfileCheck -Force
+    Set-Item WSMan:\localhost\Client\TrustedHosts -Value '*' -force
+
+    Write-outpu '...Restart Service'
+    Stop-Service -Name WinRM
+    Set-Service -Name WinRM -StartupType Automatic
+    Start-Service -Name WinRM
+}
+
 function Install-Server {
 
     write-output "Download Carla"
@@ -31,6 +54,7 @@ function Install-Client {
 }
 
 if ($Environment -match "Server") {
+    Set-WINRM
     Install-Server
 }
 
@@ -39,6 +63,7 @@ if ($Environment -match "Client") {
 }
 
 if (!($Environment)) {
+    Set-WINRM
     Install-Server
     Install-Client
 }

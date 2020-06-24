@@ -4,12 +4,6 @@ provider "azurerm" {
     features {}
 }
 
-# variables
-variable WINRM{
-    type = string
-    default = "WINRM.ps1"
-}
-
 # Create a resource group if it doesn't exist
 resource "azurerm_resource_group" "DeepDriver_ResourceGroup" {
     name     = "DeepDriver_ResourceGroup"
@@ -165,28 +159,30 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
 }
 
  # Virtual Machine Extension to Deploy Software
- resource "azurerm_virtual_machine_extension" "Powershell-Extension" {
+ resource "azurerm_virtual_machine_extension" "Powershell-Extension-Deploy" {
     depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
-    name                 = "Powershell-Extension"
+    name                 = "Powershell-Extension-Deploy"
     virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
     publisher            = "Microsoft.Compute"
     type                 = "CustomScriptExtension"
     type_handler_version = "1.9"
     protected_settings = <<PROTECTED_SETTINGS
         {
-            "commandToExecute": "powershell.exe -Command ./Test.ps1
+            "commandToExecute": "powershell.exe -Command ./DeploySoftware.ps1"
         }
     PROTECTED_SETTINGS
 
     settings = <<SETTINGS
         {
             "fileUris": [
-            "https://github.com/pcbl/DeepDriver/blob/master/Infrastructure/Azure/CarlaServer/Test.ps1"
+            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeploySoftware.ps1"
             ]
         }
     SETTINGS
 
-    // provisioner "file" {
+ }
+
+     // provisioner "file" {
     //     source      = "./DeploySoftware.ps1"
     //     destination = "C:/temp/DeploySoftware.ps1"
 
@@ -196,5 +192,3 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     //         password = "P@$$w0rd1234!"
     //         host     = "DeepDriverVM"
     //     }
-
- }
