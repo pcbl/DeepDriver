@@ -180,6 +180,11 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
         }
     SETTINGS
 
+    timeouts {
+        create = "60m"
+        read = "60m"
+    }
+
  }
 
      // provisioner "file" {
