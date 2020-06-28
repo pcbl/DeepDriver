@@ -506,3 +506,16 @@ MigrationBackup/
 *terraform-provider-*.exe
 *terraform-provider-random_v2.2.1_x4.exe
 *terraform-provider-azurerm_v2.15.0_x5.exe
+Infrastructure/Azure/CarlaServer/.terraform/modules/run_command/terraform-azurerm-vm-run-command-1.0.0/.github/main.workflow
+Infrastructure/Azure/CarlaServer/.terraform/modules/run_command/terraform-azurerm-vm-run-command-1.0.0/.github/CODEOWNERS
+Infrastructure/Azure/CarlaServer/.terraform/modules/run_command/terraform-azurerm-vm-run-command-1.0.0/variables.tf
+Infrastructure/Azure/CarlaServer/.terraform/modules/run_command/terraform-azurerm-vm-run-command-1.0.0/README.md
+Infrastructure/Azure/CarlaServer/.terraform/modules/run_command/terraform-azurerm-vm-run-command-1.0.0/main.tf
+Infrastructure/Azure/CarlaServer/.terraform/modules/run_command/terraform-azurerm-vm-run-command-1.0.0/LICENSE
+Infrastructure/Azure/CarlaServer/.terraform/modules/run_command/terraform-azurerm-vm-run-command-1.0.0/CHANGELOG.md
+Infrastructure/Azure/CarlaServer/.terraform/modules/run_command/terraform-azurerm-vm-run-command-1.0.0/.releaserc.yml
+Infrastructure/Azure/CarlaServer/.terraform/modules/modules.json
+Infrastructure/Azure/CarlaServer/terraform.tfstate.backup
+Infrastructure/Azure/CarlaServer/terraform.tfstate
+Infrastructure/Azure/CarlaServer/.terraform/modules/run_command/terraform-azurerm-vm-run-command-1.0.0/.gitignore
+Infrastructure/Azure/CarlaServer/.terraform.tfstate.lock.info

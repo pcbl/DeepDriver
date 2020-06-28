@@ -4,12 +4,6 @@ provider "azurerm" {
     features {}
 }
 
-# variables
-variable DeploySoftware{
-    type = string
-    default = "DeploySoftware.ps1"
-}
-
 # Create a resource group if it doesn't exist
 resource "azurerm_resource_group" "DeepDriver_ResourceGroup" {
     name     = "DeepDriver_ResourceGroup"
@@ -59,13 +53,13 @@ resource "azurerm_network_security_group" "DeepDriver_NetworkSecurityGroup" {
     resource_group_name = azurerm_resource_group.DeepDriver_ResourceGroup.name
     
     security_rule {
-        name                       = "RDP"
+        name                       = "RDPandWINRM"
         priority                   = 1001
         direction                  = "Inbound"
         access                     = "Allow"
         protocol                   = "Tcp"
         source_port_range          = "*"
-        destination_port_range     = "3389"
+        destination_port_ranges     = ["3389","5985"]
         source_address_prefix      = "*"
         destination_address_prefix = "*"
     }
@@ -129,7 +123,7 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     location              = "westeurope"
     resource_group_name   = azurerm_resource_group.DeepDriver_ResourceGroup.name
     network_interface_ids = [azurerm_network_interface.DeepDriver_NIC.id]
-    size                  = "Standard NC6_Promo" 
+    size                  = "Standard_NC6" 
     # https://docs.microsoft.com/de-de/azure/virtual-machines/nc-series?toc=/azure/virtual-machines/linux/toc.json&bc=/azure/virtual-machines/linux/breadcrumb/toc.json
     computer_name         = "DeepDriverVM"
     admin_username        = "azureuser"
@@ -153,24 +147,53 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
         storage_account_uri = azurerm_storage_account.DeepDriver_storageaccount.primary_blob_endpoint
     }
 
+
+    timeouts {
+        create = "60m"
+        read = "60m"
+    }
+
     tags = {
         environment = "DeepDriver_TerraformInfrastructure"
     }
 }
-    # Virtual Machine Extension to Install IIS
-resource "azurerm_virtual_machine_extension" "Powershell-Extension" {
-    depends_on=[azurerm_windows_virtual_machine.DeepDriverVM]
-    name = "Powershell-Extension"
+
+ # Virtual Machine Extension to Deploy Software
+ resource "azurerm_virtual_machine_extension" "Powershell-Extension-Deploy" {
+    depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
+    name                 = "Powershell-Extension-Deploy"
     virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
-    # publisher            = "Microsoft.Compute"
-    publisher            = "Microsoft.Azure.Extensions"
-    # type                 = "CustomScriptExtension"
-    type                 = "CustomScript"
-    # type_handler_version = "1.9"
-    type_handler_version = "2.0"
-    protected_settings = <<PROT
-    {
-        "script": "${base64encode(file(var.DeploySoftware))}"
+    publisher            = "Microsoft.Compute"
+    type                 = "CustomScriptExtension"
+    type_handler_version = "1.9"
+    protected_settings = <<PROTECTED_SETTINGS
+        {
+            "commandToExecute": "powershell.exe -Command ./DeploySoftware.ps1"
+        }
+    PROTECTED_SETTINGS
+
+    settings = <<SETTINGS
+        {
+            "fileUris": [
+            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeploySoftware.ps1"
+            ]
+        }
+    SETTINGS
+
+    timeouts {
+        create = "60m"
+        read = "60m"
     }
-    PROT
-}
+
+ }
+
+     // provisioner "file" {
+    //     source      = "./DeploySoftware.ps1"
+    //     destination = "C:/temp/DeploySoftware.ps1"
+
+    //     connection {
+    //         type     = "winrm"
+    //         user     = "Administrator"
+    //         password = "P@$$w0rd1234!"
+    //         host     = "DeepDriverVM"
+    //     }
