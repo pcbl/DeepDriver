@@ -21,7 +21,7 @@ function Set-WINRM {
     Enable-PSRemoting -SkipNetworkProfileCheck -Force
     Set-Item WSMan:\localhost\Client\TrustedHosts -Value '*' -force
 
-    Write-outpu '...Restart Service'
+    Write-output '...Restart Service'
     Stop-Service -Name WinRM
     Set-Service -Name WinRM -StartupType Automatic
     Start-Service -Name WinRM
@@ -67,7 +67,7 @@ function New-CarlaDesktopIcon{
     $WScriptShell = New-Object -ComObject WScript.Shell
     $Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
     $Shortcut.TargetPath = $SourceFileLocation
-    $Shortcut.IconLocation = "C:\Users\$env:USERNAME\Downloads\CarlaUE4.lnk"
+    $Shortcut.IconLocation = "C:\Users\Administrator\Downloads\CarlaUE4.lnk"
     $Shortcut.Arguments = ""
     $Shortcut.Save()
 }
@@ -89,9 +89,9 @@ function Install-Nvidea {
     $wc.Downloadfile("$URL", "$DestinationFolder\$File")
 
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    choco install 7zip -y -force
-    start-process -FilePath "C:\ProgramData\chocolatey\bin\7z.exe" -ArgumentList "x C:\Temp\398.75-tesla-desktop-winserver2016-international.exe -oC:\Temp\NvideaSetup -y" -PassThru -wait
-    start-process -FilePath "C:\Temp\NvideaSetup\Setup.exe" -ArgumentList "-s" -PassThru -Wait
+    start-process -FilePath C:\ProgramData\chocolatey\bin\choco.exe -ArgumentList "install 7zip -y -force" -PassThru -wait -Verb runas
+    start-process -FilePath "C:\ProgramData\chocolatey\bin\7z.exe" -ArgumentList "x C:\Temp\398.75-tesla-desktop-winserver2016-international.exe -oC:\Temp\NvideaSetup -y" -PassThru -Wait -Verb runas
+    start-process -FilePath "C:\Temp\NvideaSetup\Setup.exe" -ArgumentList "-s" -PassThru -Wait -Verb runas
 
 }
 
@@ -111,6 +111,6 @@ if (!($Environment)) {
     Install-Server
     New-CarlaDesktopIcon
     New-CarlaService
-    Install-Client
     Install-Nvidea
+    Install-Client
 }
