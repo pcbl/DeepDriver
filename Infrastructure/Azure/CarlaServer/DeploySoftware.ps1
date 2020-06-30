@@ -60,18 +60,18 @@ function Install-Client {
 }
 
 function New-CarlaDesktopIcon{
-    $SourceFileLocation = “C:\Temp\CARLA_0.9.9.3\WindowsNoEditor\CarlaUE4.exe”
-    $ShortcutLocation = “C:\Users\$env:USERNAME\Desktop\CarlaUE4.lnk”
+    $SourceFileLocation = "C:\Temp\CARLA_0.9.9.3\WindowsNoEditor\CarlaUE4.exe"
+    $ShortcutLocation = "C:\Users\$env:USERNAME\Desktop\CarlaUE4.lnk"
     $WScriptShell = New-Object -ComObject WScript.Shell
     $Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
     $Shortcut.TargetPath = $SourceFileLocation
-    $Shortcut.IconLocation = “C:\Users\$env:USERNAME\Downloads\CarlaUE4.lnk”
-    $Shortcut.Arguments = “”
+    $Shortcut.IconLocation = "C:\Users\$env:USERNAME\Downloads\CarlaUE4.lnk"
+    $Shortcut.Arguments = ""
     $Shortcut.Save()
 }
 
 function New-CarlaService {
-    new-service -Name CarlaServer -BinaryPathName "C:\Temp\CARLA_0.9.9.3\WindowsNoEditor\CarlaUE4.exe" -DisplayName "Carla" -Description "Carla Server" -StartupType "Automatic"
+    new-service -Name "CarlaServer" -BinaryPathName "C:\Temp\WindowsNoEditor\CarlaUE4.exe" -DisplayName "CarlaServer" -Description "CarlaServer" -StartupType "Automatic"
 }
 
 function Install-Nvidea {
@@ -86,9 +86,9 @@ function Install-Nvidea {
     $wc = New-Object net.webclient
     $wc.Downloadfile("$URL", "$DestinationFolder\$File")
 
-    write-output "Extract Carla"
-    $ProgressPreference = "SilentlyContinue"
-    start-process -FilePath "$DestinationFolder\$File" -Wait
+    # write-output "Extract Carla"
+    # $ProgressPreference = "SilentlyContinue"
+    # start-process -FilePath "$DestinationFolder\$File" -Wait
 }
 
 if ($Environment -match "Server") {
