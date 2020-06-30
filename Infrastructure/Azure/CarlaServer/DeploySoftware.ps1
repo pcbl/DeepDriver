@@ -59,6 +59,38 @@ function Install-Client {
 
 }
 
+function New-CarlaDesktopIcon{
+    $SourceFileLocation = “C:\Temp\CARLA_0.9.9.3\WindowsNoEditor\CarlaUE4.exe”
+    $ShortcutLocation = “C:\Users\$env:USERNAME\Desktop\CarlaUE4.lnk”
+    $WScriptShell = New-Object -ComObject WScript.Shell
+    $Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
+    $Shortcut.TargetPath = $SourceFileLocation
+    $Shortcut.IconLocation = “C:\Users\$env:USERNAME\Downloads\CarlaUE4.lnk”
+    $Shortcut.Arguments = “”
+    $Shortcut.Save()
+}
+
+function New-CarlaService {
+    new-service -Name CarlaServer -BinaryPathName "C:\Temp\CARLA_0.9.9.3\WindowsNoEditor\CarlaUE4.exe" -DisplayName "Carla" -Description "Carla Server" -StartupType "Automatic"
+}
+
+function Install-Nvidea {
+    write-output "Download Carla"
+    $DestinationFolder = "C:\Temp"
+    $File = "398.75-tesla-desktop-winserver2016-international.exe"
+    $URL = "https://us.download.nvidia.com/Windows/Quadro_Certified/398.75/$File"
+    
+
+    if (!(test-path "$DestinationFolder")) { new-item "$DestinationFolder" -itemtype Directory}
+
+    $wc = New-Object net.webclient
+    $wc.Downloadfile("$URL", "$DestinationFolder\$File")
+
+    write-output "Extract Carla"
+    $ProgressPreference = "SilentlyContinue"
+    start-process -FilePath "$DestinationFolder\$File" -Wait
+}
+
 if ($Environment -match "Server") {
     Set-WINRM
     Set-CarlaFirewall
@@ -73,5 +105,8 @@ if (!($Environment)) {
     Set-WINRM
     Set-CarlaFirewall
     Install-Server
+    New-CarlaDesktopIcon
+    New-CarlaService
     Install-Client
+    Install-Nvidea
 }
