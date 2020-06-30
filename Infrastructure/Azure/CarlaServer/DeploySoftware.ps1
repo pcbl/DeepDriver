@@ -2,6 +2,8 @@ param (
     [String]$Environment = ""
 )
 
+
+
 function Set-WINRM {
     Write-Output '...Activate WinRM...'
     Write-Output '...Config...'
@@ -75,7 +77,7 @@ function New-CarlaService {
 }
 
 function Install-Nvidea {
-    write-output "Download Carla"
+    write-output "Download Nvidea"
     $DestinationFolder = "C:\Temp"
     $File = "398.75-tesla-desktop-winserver2016-international.exe"
     $URL = "https://us.download.nvidia.com/Windows/Quadro_Certified/398.75/$File"
@@ -86,9 +88,11 @@ function Install-Nvidea {
     $wc = New-Object net.webclient
     $wc.Downloadfile("$URL", "$DestinationFolder\$File")
 
-    # write-output "Extract Carla"
-    # $ProgressPreference = "SilentlyContinue"
-    # start-process -FilePath "$DestinationFolder\$File" -Wait
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    choco install 7zip -y -force
+    start-process -FilePath "C:\ProgramData\chocolatey\bin\7z.exe" -ArgumentList "x C:\Temp\398.75-tesla-desktop-winserver2016-international.exe -oC:\Temp\NvideaSetup -y" -PassThru -wait
+    start-process -FilePath "C:\Temp\NvideaSetup\Setup.exe" -ArgumentList "-s" -PassThru -Wait
+
 }
 
 if ($Environment -match "Server") {
