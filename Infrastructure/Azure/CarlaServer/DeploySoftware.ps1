@@ -25,6 +25,14 @@ function Set-WINRM {
     Start-Service -Name WinRM
 }
 
+function Set-CarlaFirewall {
+
+    Write-Output '...Carla Firewall'...
+    netsh advfirewall firewall add rule name="Carla 2000" protocol=TCP dir=in localport=2000 action=allow
+    netsh advfirewall firewall add rule name="Carla 2001" protocol=TCP dir=in localport=2001 action=allow
+    netsh advfirewall firewall add rule name="Carla 2002" protocol=TCP dir=in localport=2002 action=allow
+}
+
 function Install-Server {
 
     write-output "Download Carla"
@@ -42,12 +50,10 @@ function Install-Server {
     Expand-Archive -LiteralPath "$DestinationFolder\$File" -DestinationPath "$DestinationFolder"
 
 }
-
 function Install-Client {
 
     write-output "Install Chocolatey"
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-
     write-output "Install Anaconda"
     choco install anaconda3 -y
 
@@ -55,15 +61,17 @@ function Install-Client {
 
 if ($Environment -match "Server") {
     Set-WINRM
+    Set-CarlaFirewall
     Install-Server
 }
 
 if ($Environment -match "Client") {
-    Install-Server
+    Install-Client
 }
 
 if (!($Environment)) {
     Set-WINRM
+    Set-CarlaFirewall
     Install-Server
     Install-Client
 }

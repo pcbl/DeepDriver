@@ -53,13 +53,13 @@ resource "azurerm_network_security_group" "DeepDriver_NetworkSecurityGroup" {
     resource_group_name = azurerm_resource_group.DeepDriver_ResourceGroup.name
     
     security_rule {
-        name                       = "RDPandWINRM"
+        name                       = "RDPandWINRMandCarla"
         priority                   = 1001
         direction                  = "Inbound"
         access                     = "Allow"
         protocol                   = "Tcp"
         source_port_range          = "*"
-        destination_port_ranges     = ["3389","5985"]
+        destination_port_ranges     = ["3389","5985","2000-2002"]
         source_address_prefix      = "*"
         destination_address_prefix = "*"
     }
@@ -147,7 +147,6 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
         storage_account_uri = azurerm_storage_account.DeepDriver_storageaccount.primary_blob_endpoint
     }
 
-
     timeouts {
         create = "60m"
         read = "60m"
@@ -157,6 +156,17 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
         environment = "DeepDriver_TerraformInfrastructure"
     }
 }
+
+#  # Virtual Machine Extension to Deploy Software
+#  resource "azurerm_virtual_machine_extension" "HpcVmDrivers" {
+#      name                 = "HpcVmDrivers"
+#      depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
+#      virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
+#      publisher            = "Microsoft.HpcCompute"
+#      type                 = "HpcVmDrivers"
+#      type_handler_version = "1.1"
+
+#  }
 
  # Virtual Machine Extension to Deploy Software
  resource "azurerm_virtual_machine_extension" "Powershell-Extension-Deploy" {
