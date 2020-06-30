@@ -57,17 +57,17 @@ function Install-Client {
     write-output "Install Chocolatey"
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     write-output "Install Anaconda"
-    choco install anaconda3 -y
+    start-process -FilePath C:\ProgramData\chocolatey\bin\choco.exe -ArgumentList "install anaconda3 -y" -PassThru -wait -Verb runas
 
 }
 
-function New-CarlaDesktopIcon{
+function New-CarlaDesktopIcon {
     $SourceFileLocation = "C:\Temp\CARLA_0.9.9.3\WindowsNoEditor\CarlaUE4.exe"
-    $ShortcutLocation = "C:\Users\$env:USERNAME\Desktop\CarlaUE4.lnk"
+    $ShortcutLocation = "C:\Users\azureuser\Desktop\CarlaUE4.lnk"
     $WScriptShell = New-Object -ComObject WScript.Shell
     $Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
     $Shortcut.TargetPath = $SourceFileLocation
-    $Shortcut.IconLocation = "C:\Users\Administrator\Downloads\CarlaUE4.lnk"
+    $Shortcut.IconLocation = "C:\Temp\WindowsNoEditor\CarlaUE4.exe"
     $Shortcut.Arguments = ""
     $Shortcut.Save()
 }
