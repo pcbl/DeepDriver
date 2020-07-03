@@ -112,6 +112,7 @@ function Install-Anaconda {
 }
 
 Start-Transcript "C:\Temp\CarlaServer-DeploySoftware.log"
+
 if ($Environment -match "Server") {
     Install-Choco
     Set-WINRM
@@ -137,3 +138,5 @@ if (!($Environment)) {
 
     Install-Anaconda
 }
+
+Stop-Transcript 
