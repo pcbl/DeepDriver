@@ -59,7 +59,7 @@ resource "azurerm_network_security_group" "DeepDriver_NetworkSecurityGroup" {
         access                     = "Allow"
         protocol                   = "Tcp"
         source_port_range          = "*"
-        destination_port_ranges     = ["3389","5985","2000-2002"]
+        destination_port_ranges     = ["3389","5985","2000","2001","2002"]
         source_address_prefix      = "*"
         destination_address_prefix = "*"
     }
