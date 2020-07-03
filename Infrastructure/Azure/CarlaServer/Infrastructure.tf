@@ -167,7 +167,7 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     type_handler_version = "1.9"
     protected_settings = <<PROTECTED_SETTINGS
         {
-            "commandToExecute": "powershell.exe -Command ./DeploySoftware.ps1"
+            "commandToExecute": "powershell.exe -ExecutionPolicy bypass -Command ./DeploySoftware.ps1"
         }
     PROTECTED_SETTINGS
 
