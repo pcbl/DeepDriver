@@ -123,7 +123,7 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     location              = "westeurope"
     resource_group_name   = azurerm_resource_group.DeepDriver_ResourceGroup.name
     network_interface_ids = [azurerm_network_interface.DeepDriver_NIC.id]
-    size                  = "Standard_NC6" 
+    size                  = "Standard_NC6_PROMO" 
     # https://docs.microsoft.com/de-de/azure/virtual-machines/nc-series?toc=/azure/virtual-machines/linux/toc.json&bc=/azure/virtual-machines/linux/breadcrumb/toc.json
     computer_name         = "DeepDriverVM"
     admin_username        = "azureuser"
@@ -182,6 +182,8 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     timeouts {
         create = "60m"
         read = "60m"
+        update = "60m"
+        delete = "60m"
     }
 
  }
