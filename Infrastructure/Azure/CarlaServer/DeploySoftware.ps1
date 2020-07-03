@@ -107,6 +107,11 @@ function Install-Anaconda {
 
 }
 
+function SMI {
+    # C:\Program Files\NVIDIA Corporation\NVSMI> .\nvidia-smi.exe
+    # .\nvidia-smi -g B794:00:00.0 -dm 0
+}
+
 Start-Transcript "C:\Temp\CarlaServer-DeploySoftware.log"
 if ($Environment -match "Server") {
     Install-Choco
