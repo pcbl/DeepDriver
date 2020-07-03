@@ -157,18 +157,7 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     }
 }
 
-#  # Virtual Machine Extension to Deploy Software
-#  resource "azurerm_virtual_machine_extension" "HpcVmDrivers" {
-#      name                 = "HpcVmDrivers"
-#      depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
-#      virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
-#      publisher            = "Microsoft.HpcCompute"
-#      type                 = "HpcVmDrivers"
-#      type_handler_version = "1.1"
-
-#  }
-
- # Virtual Machine Extension to Deploy Software
+# Virtual Machine Extension to Deploy Software
  resource "azurerm_virtual_machine_extension" "Powershell-Extension-Deploy" {
     depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
     name                 = "Powershell-Extension-Deploy"
@@ -196,14 +185,3 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     }
 
  }
-
-     // provisioner "file" {
-    //     source      = "./DeploySoftware.ps1"
-    //     destination = "C:/temp/DeploySoftware.ps1"
-
-    //     connection {
-    //         type     = "winrm"
-    //         user     = "Administrator"
-    //         password = "P@$$w0rd1234!"
-    //         host     = "DeepDriverVM"
-    //     }
