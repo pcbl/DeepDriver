@@ -9,6 +9,8 @@ function Install-Choco {
 function Set-WINRM {
     Write-Output '...Activate WinRM...'
     Write-Output '...Config...'
+    Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private
+    
     winrm quickconfig -q
     winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="8192"}'
     winrm set winrm/config '@{MaxTimeoutms="1800000"}'
