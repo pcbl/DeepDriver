@@ -137,9 +137,9 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     }
 
     source_image_reference {
-        publisher = "MicrosoftWindowsServer"
-        offer     = "WindowsServer"
-        sku       = "2019-Datacenter"
+        publisher = "MicrosoftWindowsDesktop"
+        offer     = "Windows-10"
+        sku       = "rs5-pro"
         version   = "latest"
     }
 
