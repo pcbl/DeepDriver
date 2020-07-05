@@ -150,9 +150,9 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
         version   = "latest"
     }
 
-    boot_diagnostics {
-        storage_account_uri = azurerm_storage_account.DeepDriver_storageaccount.primary_blob_endpoint
-    }
+    // boot_diagnostics {
+    //     storage_account_uri = azurerm_storage_account.DeepDriver_storageaccount.primary_blob_endpoint
+    // }
 
     timeouts {
         create = "60m"
@@ -164,21 +164,53 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     }
 }
 
+// # Virtual Machine Extension to Deploy Software
+//  resource "azurerm_virtual_machine_extension" "Powershell-Extension-Deploy" {
+//     depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
+//     name                 = "Powershell-Extension-Deploy"
+//     virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
+//     publisher            = "Microsoft.Compute"
+//     type                 = "CustomScriptExtension"
+//     type_handler_version = "1.9"
+//     protected_settings = <<PROTECTED_SETTINGS
+//         {
+//             "commandToExecute": "powershell.exe -Command ./DeploySoftware.ps1"
+//         }
+//     PROTECTED_SETTINGS
+
+//     settings = <<SETTINGS
+//         {
+//             "fileUris": [
+//             "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeploySoftware.ps1"
+//             ]
+//         }
+//     SETTINGS
+
+//     timeouts {
+//         create = "60m"
+//         read = "60m"
+//         update = "60m"
+//         delete = "60m"
+//     }
+
+//  }
+
 # Virtual Machine Extension to Deploy Software
- resource "azurerm_virtual_machine_extension" "Download" {
+ resource "azurerm_virtual_machine_extension" "DeployPostConfig" {
     depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
 
-    name                 = "Powershell-Extension-Download"
+    name                 = "Powershell-Extension-DeployPostConfig"
     virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
-    publisher            = "Microsoft.Azure.Extensions"
-    type                 = "CustomScript"
-    type_handler_version = "2.0"
+    publisher            = "Microsoft.Compute"
+    type                 = "CustomScriptExtension"
+    type_handler_version = "1.9"
     settings = <<SETTINGS
         {
             "fileUris": [
-            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeploySoftware.ps1",
             "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeployPostConfig.ps1",
-            ]
+            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeploySoftware.ps1"
+            ],
+            "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -file ./DeployPostConfig.ps1"
         }
 SETTINGS
 
@@ -191,50 +223,26 @@ SETTINGS
 
  }
 
- # Virtual Machine Extension to Deploy Software
- resource "azurerm_virtual_machine_extension" "InstallPostConfig" {
-    depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
+//  # Virtual Machine Extension to Deploy Software
+//  resource "azurerm_virtual_machine_extension" "InstallPostConfig" {
+//     depends_on           = [azurerm_virtual_machine_extension.Download]
 
-    name                 = "Powershell-Extension-InstallPostConfig"
-    virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
-    publisher            = "Microsoft.Azure.Extensions"
-    type                 = "CustomScript"
-    type_handler_version = "2.0"
-    settings = <<SETTINGS
-        {
-            "commandToExecute": "powershell.exe -ExecutionPolicy bypass -Command ./DeployPostConfig.ps1"
-        }
-SETTINGS
+//     name                 = "Powershell-Extension-InstallPostConfig"
+//     virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
+//     publisher            = "Microsoft.Compute"
+//     type                 = "CustomScriptExtension"
+//     type_handler_version = "1.9"
+//     settings = <<SETTINGS
+//         {
+//             "commandToExecute": "powershell.exe -ExecutionPolicy bypass -Command ./DeployPostConfig.ps1"
+//         }
+// SETTINGS
 
-    timeouts {
-        create = "60m"
-        read = "60m"
-        update = "60m"
-        delete = "60m"
-    }
+//     timeouts {
+//         create = "60m"
+//         read = "60m"
+//         update = "60m"
+//         delete = "60m"
+//     }
 
- }
-
-  # Virtual Machine Extension to Deploy Software
- resource "azurerm_virtual_machine_extension" "InstallDeploySoftware" {
-    depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
-
-    name                 = "Powershell-Extension-InstallDeploySoftware"
-    virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
-    publisher            = "Microsoft.Azure.Extensions"
-    type                 = "CustomScript"
-    type_handler_version = "2.0"
-    settings = <<SETTINGS
-        {
-            "commandToExecute": "powershell.exe -ExecutionPolicy bypass -Command ./DeploySoftware.ps1"
-        }
-SETTINGS
-
-    timeouts {
-        create = "60m"
-        read = "60m"
-        update = "60m"
-        delete = "60m"
-    }
-
- }
+//  }

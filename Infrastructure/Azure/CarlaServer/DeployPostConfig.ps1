@@ -1,11 +1,11 @@
 
 function Install-Choco {
-    write-output "Install Chocolatey"
+    write-output "...Install Chocolatey..."
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 
 function Set-WINRM {
-    Write-Output 'Activate WinRM...'
+    Write-Output '...Activate WinRM...'
     Write-Output '...Config...'
     Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private
     
@@ -15,21 +15,22 @@ function Set-WINRM {
     winrm set winrm/config/service '@{AllowUnencrypted="true"}'
     winrm set winrm/config/service/auth '@{Basic="true"}'
 
-    Write-Output '...Firewall'...
+    Write-Output '...Firewall...'
     netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow
     netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow
 
-    Write-Output '...Profile and Trusted'
+    Write-Output '...Profile and Trusted...'
     Enable-PSRemoting -SkipNetworkProfileCheck -Force
     Set-Item WSMan:\localhost\Client\TrustedHosts -Value '*' -force
 
-    Write-output '...Restart Service'
+    Write-output '...Restart Service...'
     Stop-Service -Name WinRM
     Set-Service -Name WinRM -StartupType Automatic
     Start-Service -Name WinRM
 }
 
 function Install-7zip {
+    write-output "...Install 7zip..."
     start-process -FilePath "C:\ProgramData\chocolatey\bin\choco.exe" -ArgumentList "install 7zip -y -force" -PassThru -wait -NoNewWindow 
 }
 
@@ -39,5 +40,7 @@ $global:ProgressPreference = 'SilentlyContinue'
 Install-Choco
 Set-WINRM
 Install-7zip
+
+./DeploySoftware.ps1
 
 Stop-Transcript
