@@ -76,7 +76,6 @@ function Install-Anaconda {
 #     # .\nvidia-smi -g B794:00:00.0 -dm 0
 # }
 
-Start-Transcript "C:\Temp\CarlaServer-DeploySoftware.log"
 $global:ProgressPreference = 'SilentlyContinue'
 
 Install-Carla
@@ -84,5 +83,3 @@ Install-Nvidea
 Install-VCRedist
 Install-directX
 Install-Anaconda
-
-Stop-Transcript
