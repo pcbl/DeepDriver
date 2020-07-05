@@ -41,6 +41,6 @@ Install-Choco
 Set-WINRM
 Install-7zip
 
-start-process "powershell.exe" -ArgumentList "-file .\DeploySoftware.ps1" -PassThru -wait -NoNewWindow
+start-process "powershell.exe" -ArgumentList "-file .\DeploySoftware.ps1" -wait
 
 Stop-Transcript
