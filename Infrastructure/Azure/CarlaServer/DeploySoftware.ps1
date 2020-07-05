@@ -42,12 +42,12 @@ function Install-Nvidea {
     $wc = New-Object net.webclient
     $wc.Downloadfile("$URL", "$DestinationFolder\$File")
 
-    start-process -FilePath "C:\ProgramData\chocolatey\bin\7z.exe" -ArgumentList "x C:\Temp\398.75-tesla-desktop-winserver2016-international.exe -oC:\Temp\NvideaSetup -y" -PassThru -Wait -NoNewWindow 
+    7z.exe x C:\Temp\398.75-tesla-desktop-winserver2016-international.exe -oC:\Temp\NvideaSetup -y
     start-process -FilePath "C:\Temp\NvideaSetup\Setup.exe" -ArgumentList "-s" -PassThru -Wait -NoNewWindow 
 }
 
 function Install-VCRedist {
-    start-process -FilePath C:\ProgramData\chocolatey\bin\choco.exe -ArgumentList "install vcredist140 -y -force" -PassThru -wait -NoNewWindow 
+    choco install vcredist140 -y -force
 }
 
 function Install-directX {
@@ -63,12 +63,12 @@ function Install-directX {
 
     write-output "Install DirectX"
     $ProgressPreference = "SilentlyContinue"
-    start-process -FilePath "C:\ProgramData\chocolatey\bin\7z.exe" -ArgumentList "x C:\Temp\directx_dec2006_redist.exe -oC:\Temp\directx -y" -PassThru -Wait -NoNewWindow 
+    7z x C:\Temp\directx_dec2006_redist.exe -oC:\Temp\directx -y
     start-process -FilePath "C:\Temp\directx\DXSETUP.exe" -ArgumentList "/silent" -PassThru -Wait -NoNewWindow     
 }
 function Install-Anaconda {
     write-output "Install Anaconda"
-    start-process -FilePath C:\ProgramData\chocolatey\bin\choco.exe -ArgumentList "install anaconda3 -y" -PassThru -wait -NoNewWindow 
+    choco install anaconda3 -y
 }
 
 # function SMI {
