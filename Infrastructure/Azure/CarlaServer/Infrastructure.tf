@@ -94,28 +94,28 @@ resource "azurerm_network_interface_security_group_association" "Binding" {
                                 
 }
 
-# Generate random text for a unique storage account name
-resource "random_id" "randomId" {
-    keepers = {
-        # Generate a new ID only when a new resource group is defined
-        resource_group = azurerm_resource_group.DeepDriver_ResourceGroup.name
-    }
+// # Generate random text for a unique storage account name
+// resource "random_id" "randomId" {
+//     keepers = {
+//         # Generate a new ID only when a new resource group is defined
+//         resource_group = azurerm_resource_group.DeepDriver_ResourceGroup.name
+//     }
     
-    byte_length = 8
-}
+//     byte_length = 8
+// }
 
-# Create storage account for boot diagnostics
-resource "azurerm_storage_account" "DeepDriver_storageaccount" {
-    name                        = "diag${random_id.randomId.hex}"
-    resource_group_name         = azurerm_resource_group.DeepDriver_ResourceGroup.name
-    location                    = "westeurope"
-    account_tier                = "Standard"
-    account_replication_type    = "LRS"
+// # Create storage account for boot diagnostics
+// resource "azurerm_storage_account" "DeepDriver_storageaccount" {
+//     name                        = "diag${random_id.randomId.hex}"
+//     resource_group_name         = azurerm_resource_group.DeepDriver_ResourceGroup.name
+//     location                    = "westeurope"
+//     account_tier                = "Standard"
+//     account_replication_type    = "LRS"
 
-    tags = {
-        environment = "DeepDriver_TerraformInfrastructure"
-    }
-}
+//     tags = {
+//         environment = "DeepDriver_TerraformInfrastructure"
+//     }
+// }
 
 # Create Virtual Machine
 resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
@@ -136,10 +136,17 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
         # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
     }
 
+    // source_image_reference {
+    //     publisher = "MicrosoftWindowsDesktop"
+    //     offer     = "Windows-10"
+    //     sku       = "rs5-pro"
+    //     version   = "latest"
+    // }
+
     source_image_reference {
-        publisher = "MicrosoftWindowsDesktop"
-        offer     = "Windows-10"
-        sku       = "rs5-pro"
+        publisher = "MicrosoftWindowsServer"
+        offer     = "WindowsServer"
+        sku       = "2016-Datacenter"
         version   = "latest"
     }
 
@@ -158,26 +165,70 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
 }
 
 # Virtual Machine Extension to Deploy Software
- resource "azurerm_virtual_machine_extension" "Powershell-Extension-Deploy" {
+ resource "azurerm_virtual_machine_extension" "Download" {
     depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
-    name                 = "Powershell-Extension-Deploy"
-    virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
-    publisher            = "Microsoft.Compute"
-    type                 = "CustomScriptExtension"
-    type_handler_version = "1.9"
-    protected_settings = <<PROTECTED_SETTINGS
-        {
-            "commandToExecute": "powershell.exe -ExecutionPolicy bypass -Command ./DeploySoftware.ps1"
-        }
-    PROTECTED_SETTINGS
 
+    name                 = "Powershell-Extension-Download"
+    virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
+    publisher            = "Microsoft.Azure.Extensions"
+    type                 = "CustomScript"
+    type_handler_version = "2.0"
     settings = <<SETTINGS
         {
             "fileUris": [
-            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeploySoftware.ps1"
+            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeploySoftware.ps1",
+            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeployPostConfig.ps1",
             ]
         }
-    SETTINGS
+SETTINGS
+
+    timeouts {
+        create = "60m"
+        read = "60m"
+        update = "60m"
+        delete = "60m"
+    }
+
+ }
+
+ # Virtual Machine Extension to Deploy Software
+ resource "azurerm_virtual_machine_extension" "InstallPostConfig" {
+    depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
+
+    name                 = "Powershell-Extension-InstallPostConfig"
+    virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
+    publisher            = "Microsoft.Azure.Extensions"
+    type                 = "CustomScript"
+    type_handler_version = "2.0"
+    settings = <<SETTINGS
+        {
+            "commandToExecute": "powershell.exe -ExecutionPolicy bypass -Command ./DeployPostConfig.ps1"
+        }
+SETTINGS
+
+    timeouts {
+        create = "60m"
+        read = "60m"
+        update = "60m"
+        delete = "60m"
+    }
+
+ }
+
+  # Virtual Machine Extension to Deploy Software
+ resource "azurerm_virtual_machine_extension" "InstallDeploySoftware" {
+    depends_on           = [azurerm_windows_virtual_machine.DeepDriverVM]
+
+    name                 = "Powershell-Extension-InstallDeploySoftware"
+    virtual_machine_id   = azurerm_windows_virtual_machine.DeepDriverVM.id
+    publisher            = "Microsoft.Azure.Extensions"
+    type                 = "CustomScript"
+    type_handler_version = "2.0"
+    settings = <<SETTINGS
+        {
+            "commandToExecute": "powershell.exe -ExecutionPolicy bypass -Command ./DeploySoftware.ps1"
+        }
+SETTINGS
 
     timeouts {
         create = "60m"
