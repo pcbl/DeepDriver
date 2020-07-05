@@ -33,7 +33,7 @@ function Install-7zip {
     start-process -FilePath "C:\ProgramData\chocolatey\bin\choco.exe" -ArgumentList "install 7zip -y -force" -PassThru -wait -NoNewWindow 
 }
 
-Start-Transcript "C:\Temp\CarlaServer-DeploySoftware.log"
+Start-Transcript "C:\Temp\CarlaServer-DeployPostConfig.log"
 $global:ProgressPreference = 'SilentlyContinue'
 
 Install-Choco
