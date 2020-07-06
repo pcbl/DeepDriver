@@ -63,7 +63,7 @@ function Install-directX {
 
     write-output "Install DirectX"
     $ProgressPreference = "SilentlyContinue"
-    7z x C:\Temp\directx_dec2006_redist.exe -oC:\Temp\directx -y
+    7z x C:\Temp\$File -oC:\Temp\directx -y
     start-process -FilePath "C:\Temp\directx\DXSETUP.exe" -ArgumentList "/silent" -PassThru -Wait -NoNewWindow     
 }
 function Install-Anaconda {
