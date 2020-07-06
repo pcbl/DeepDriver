@@ -89,6 +89,7 @@ Set-SMI
 # Install-Anaconda
 
 write-output "Restart Computer"
-Restart-Computer
 
 Stop-Transcript
+
+Restart-Computer

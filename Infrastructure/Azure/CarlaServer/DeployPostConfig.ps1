@@ -31,7 +31,7 @@ function Set-WINRM {
 
 function Install-7zip {
     write-output "...Install 7zip..."
-    start-process -FilePath "C:\ProgramData\chocolatey\bin\choco.exe" -ArgumentList "install 7zip -y -force" -PassThru -wait -NoNewWindow 
+    start-process -FilePath "C:\ProgramData\chocolatey\bin\choco.exe" -ArgumentList "install 7zip -y -force" -wait -NoNewWindow 
 }
 
 Start-Transcript "C:\Temp\CarlaServer-DeployPostConfig.log"
@@ -41,6 +41,7 @@ Install-Choco
 Set-WINRM
 Install-7zip
 
-start-process "powershell.exe" -ArgumentList "-ExecutionPolicy bypass -file .\DeploySoftware.ps1" -wait -PassThru
+write-output "...Start Deploy Software..."
+start-process "powershell.exe" -ArgumentList "-ExecutionPolicy bypass -file .\DeploySoftware.ps1" -wait -NoNewWindow 
 
 Stop-Transcript
