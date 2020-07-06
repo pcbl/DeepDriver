@@ -24,8 +24,8 @@ function Install-Carla {
     # $Shortcut.Arguments = ""
     # $Shortcut.Save()
 
-    write-output "Set Service Carla..."
-    new-service -Name "CarlaServer" -BinaryPathName "C:\Temp\WindowsNoEditor\CarlaUE4.exe" -DisplayName "CarlaServer" -Description "CarlaServer" -StartupType "Automatic"
+    # write-output "Set Service Carla..."
+    # new-service -Name "CarlaServer" -BinaryPathName "C:\Temp\WindowsNoEditor\CarlaUE4.exe" -DisplayName "CarlaServer" -Description "CarlaServer" -StartupType "Automatic"
 
     Write-Output '...Set Carla Firewall'...
     netsh advfirewall firewall add rule name="Carla 2000" protocol=TCP dir=in localport=2000 action=allow
@@ -66,14 +66,16 @@ function Install-directX {
     7z x C:\Temp\$File -oC:\Temp\directx -y
     start-process -FilePath "C:\Temp\directx\DXSETUP.exe" -ArgumentList "/silent" -PassThru -Wait -NoNewWindow     
 }
+
 function Install-Anaconda {
     write-output "Install Anaconda"
     choco install anaconda3 -y
 }
 
-function SMI {
-     #C:\Program Files\NVIDIA Corporation\NVSMI> .\nvidia-smi.exe
-     C:\Progra~1\NVIDIA Corporation\NVSMI\nvidia-smi.exe -g B794:00:00.0 -dm 0
+function Set-SMI {
+    write-output "Set SMI"
+     Set-Location "C:\Progra~1\NVIDIA Corporation\NVSMI"
+     .\nvidia-smi.exe -g 00000001:00:00.0 -dm 0
 }
 
 Start-Transcript "C:\Temp\CarlaServer-DeploySoftware.log"
@@ -83,8 +85,10 @@ Install-Carla
 Install-Nvidea
 Install-VCRedist
 Install-directX
-Install-Anaconda
+Set-SMI
+# Install-Anaconda
+
+write-output "Restart Computer"
+Restart-Computer
 
 Stop-Transcript
-
-Restart-Computer
