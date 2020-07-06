@@ -53,8 +53,8 @@ function Install-VCRedist {
 function Install-directX {
     write-output "Download DirectX"
     $DestinationFolder = "C:\Temp"
-    $File = "directx_dec2006_redist.exe"
-    $URL = "https://download.microsoft.com/download/8/c/9/8c968ecc-8402-49f3-aacb-dc4c5d230a9a/$file"
+    $File = "directx_Jun2010_redist.exe"
+    $URL = "https://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/$file"
 
     if (!(test-path "$DestinationFolder")) { new-item "$DestinationFolder" -itemtype Directory}
 
@@ -71,10 +71,10 @@ function Install-Anaconda {
     choco install anaconda3 -y
 }
 
-# function SMI {
-#     # C:\Program Files\NVIDIA Corporation\NVSMI> .\nvidia-smi.exe
-#     # .\nvidia-smi -g B794:00:00.0 -dm 0
-# }
+function SMI {
+     #C:\Program Files\NVIDIA Corporation\NVSMI> .\nvidia-smi.exe
+     C:\Progra~1\NVIDIA Corporation\NVSMI\nvidia-smi.exe -g B794:00:00.0 -dm 0
+}
 
 Start-Transcript "C:\Temp\CarlaServer-DeploySoftware.log"
 $global:ProgressPreference = 'SilentlyContinue'
@@ -86,3 +86,5 @@ Install-directX
 Install-Anaconda
 
 Stop-Transcript
+
+Restart-Computer
