@@ -129,12 +129,12 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
     admin_username        = "azureuser"
     admin_password        = "P@$$w0rd1234!"
 
-    # os_disk {
-    #     name              = "DeepDriver_OsDisk"
-    #     caching           = "ReadWrite"
-    #     storage_account_type = "Standard_LRS"
-    #     # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
-    # }
+    os_disk {
+        name              = "DeepDriver_OsDisk"
+        caching           = "ReadWrite"
+        storage_account_type = "Standard_LRS"
+        # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
+    }
 
     #  source_image_reference {
     #      publisher = "MicrosoftWindowsDesktop"
