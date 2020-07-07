@@ -39,14 +39,14 @@ function Install-Carla {
     if (!(test-path "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
     Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
     
-    if (!(test-path "C:\Users\azureuser.DeepDriverVM.001\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
+    if (!(test-path "C:\Users\azureuser.DeepDriverVM.001\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.001\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
+    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.001\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
 
-    if (!(test-path "C:\Users\azureuser.DeepDriverVM.002\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
+    if (!(test-path "C:\Users\azureuser.DeepDriverVM.002\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.002\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
+    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.002\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
 
-    if (!(test-path "C:\Users\azureuser.DeepDriverVM.003\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
+    if (!(test-path "C:\Users\azureuser.DeepDriverVM.003\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.003\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
+    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.003\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
 }
 
 # Function Set-Shortcut($RunPath, $Arguments, $ShortcutName, $ShortcutLocation){
