@@ -14,23 +14,28 @@ function Install-Carla {
     $ProgressPreference = "SilentlyContinue"
     Expand-Archive -LiteralPath "$DestinationFolder\$File" -DestinationPath "$DestinationFolder"
 
-    # write-output "Set Icon Carla"
-    # $SourceFileLocation = "C:\Temp\CARLA_0.9.9.3\WindowsNoEditor\CarlaUE4.exe"
-    # $ShortcutLocation = "C:\Users\azureuser\Desktop\CarlaUE4.lnk"
-    # $WScriptShell = New-Object -ComObject WScript.Shell
-    # $Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
-    # $Shortcut.TargetPath = $SourceFileLocation
-    # $Shortcut.IconLocation = "C:\Temp\WindowsNoEditor\CarlaUE4.exe"
-    # $Shortcut.Arguments = ""
-    # $Shortcut.Save()
+    write-output "Set Service Carla..."
+    new-service -Name "CarlaServer" -BinaryPathName "C:\Temp\WindowsNoEditor\CarlaUE4.exe" -DisplayName "CarlaServer" -Description "CarlaServer" -StartupType "Automatic"
 
-    # write-output "Set Service Carla..."
-    # new-service -Name "CarlaServer" -BinaryPathName "C:\Temp\WindowsNoEditor\CarlaUE4.exe" -DisplayName "CarlaServer" -Description "CarlaServer" -StartupType "Automatic"
-
-    Write-Output '...Set Carla Firewall'...
+    Write-Output "...Set Carla Firewall..."
     netsh advfirewall firewall add rule name="Carla 2000" protocol=TCP dir=in localport=2000 action=allow
     netsh advfirewall firewall add rule name="Carla 2001" protocol=TCP dir=in localport=2001 action=allow
     netsh advfirewall firewall add rule name="Carla 2002" protocol=TCP dir=in localport=2002 action=allow
+
+}
+
+Function Set-Shortcut($RunPath, $Arguments, $ShortcutName, $ShortcutLocation){
+
+    write-output "Copy Icon Carla to StartUp"
+    $WScriptShell = New-Object -ComObject WScript.Shell
+    $Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation + $ShortcutName + '.lnk')
+    $Shortcut.Targetpath = -join($RunPath,"\CarlaUE4.exe")
+    $Shortcut.Arguments = [string]$Arguments
+    $Shortcut.WorkingDirectory = $RunPath
+    $Shortcut.IconLocation = -join($RunPath,"\CarlaUE4.exe",", 0")
+    $Shortcut.Save()
+
+    Write-Host "`nShortcut created at "$ShortcutLocation$ShortcutName'.lnk'
 }
 
 function Install-Nvidea {
@@ -86,6 +91,12 @@ Install-Nvidea
 Install-VCRedist
 Install-directX
 Set-SMI
+
+$DefaultFileName = "C:\Temp\WindowsNoEditor\CarlaUE4.exe"
+$Runapppath = "C:\Temp\WindowsNoEditor"
+
+Set-Shortcut $Runapppath $DefaultFileName "CarlaUE4ShortCut" "C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+
 # Install-Anaconda
 
 write-output "Restart Computer"

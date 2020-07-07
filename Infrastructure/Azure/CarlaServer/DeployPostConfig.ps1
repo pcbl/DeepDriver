@@ -34,12 +34,21 @@ function Install-7zip {
     start-process -FilePath "C:\ProgramData\chocolatey\bin\choco.exe" -ArgumentList "install 7zip -y -force" -wait -NoNewWindow 
 }
 
+function Set-AutoLogon {
+    Write-Output 'activate Auto Logon'
+    New-ItemProperty -path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -name "DefaultUsername" -value "azureuser" -Force
+    New-ItemProperty -path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -name "DefaultPassword" -value "xotqgp34XtL7DwM2MtcC" -Force
+    New-ItemProperty -path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -name "AutoAdminLogon" -value "1" -Force
+}
+
 Start-Transcript "C:\Temp\CarlaServer-DeployPostConfig.log"
 $global:ProgressPreference = 'SilentlyContinue'
 
 Install-Choco
 Set-WINRM
 Install-7zip
+Set-AutoLogon
+
 
 write-output "...Start Deploy Software..."
 start-process "powershell.exe" -ArgumentList "-ExecutionPolicy bypass -file .\DeploySoftware.ps1" -wait -NoNewWindow 
