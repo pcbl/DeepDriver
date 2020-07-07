@@ -25,9 +25,9 @@ function Install-Carla {
     Write-Output "...Copy Ini file..."
     Copy-item .\GFT.ini "C:\Temp\WindowsNoEditor\CarlaUE4\Config\GFT.ini"
 
-    Write-Output "...Copy StartupFile file..."
-    move-item .\CarlaUE4.download CarlaUE4.lnk
-    Copy-item .\CarlaUE4.lnk "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
+    #Write-Output "...Copy StartupFile file..."
+    #move-item .\CarlaUE4.download CarlaUE4.lnk
+    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
 }
 
 # Function Set-Shortcut($RunPath, $Arguments, $ShortcutName, $ShortcutLocation){
