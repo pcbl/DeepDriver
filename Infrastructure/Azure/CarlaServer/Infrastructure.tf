@@ -143,7 +143,9 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
         {
             "fileUris": [
             "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeployPostConfig.ps1",
-            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeploySoftware.ps1"
+            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/DeploySoftware.ps1",
+            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/Configuration/GFT.ini",
+            "https://raw.githubusercontent.com/pcbl/DeepDriver/master/Infrastructure/Azure/CarlaServer/Configuration/CarlaUE4.lnk"
             ],
             "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -file ./DeployPostConfig.ps1"
         }
