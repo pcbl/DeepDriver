@@ -23,10 +23,11 @@ function Install-Carla {
     netsh advfirewall firewall add rule name="Carla 2002" protocol=TCP dir=in localport=2002 action=allow
 
     Write-Output "...Copy Ini file..."
-    Copy-item .\Configuration\GFT.ini "C:\Temp\WindowsNoEditor\CarlaUE4\Config\GFT.ini"
+    Copy-item .\GFT.ini "C:\Temp\WindowsNoEditor\CarlaUE4\Config\GFT.ini"
 
     Write-Output "...Copy StartupFile file..."
-    Copy-item .\Configuration\CarlaUE4.lnk "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
+    move-item .\CarlaUE4.download CarlaUE4.lnk
+    Copy-item .\CarlaUE4.lnk "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
 }
 
 # Function Set-Shortcut($RunPath, $Arguments, $ShortcutName, $ShortcutLocation){
