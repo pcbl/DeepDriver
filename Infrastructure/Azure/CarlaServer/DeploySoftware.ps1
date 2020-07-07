@@ -95,7 +95,7 @@ Set-SMI
 $DefaultFileName = "C:\Temp\WindowsNoEditor\CarlaUE4.exe"
 $Runapppath = "C:\Temp\WindowsNoEditor"
 
-Set-Shortcut $Runapppath $DefaultFileName "CarlaUE4ShortCut" "C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+Set-Shortcut $Runapppath $DefaultFileName "CarlaUE4ShortCut" "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\"
 
 # Install-Anaconda
 
