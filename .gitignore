@@ -519,3 +519,5 @@ Infrastructure/Azure/CarlaServer/terraform.tfstate.backup
 Infrastructure/Azure/CarlaServer/terraform.tfstate
 Infrastructure/Azure/CarlaServer/.terraform/modules/run_command/terraform-azurerm-vm-run-command-1.0.0/.gitignore
 Infrastructure/Azure/CarlaServer/.terraform.tfstate.lock.info
+
+!carla/**
