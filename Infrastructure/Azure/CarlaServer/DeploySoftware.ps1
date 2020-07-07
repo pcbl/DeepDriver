@@ -27,8 +27,10 @@ function Install-Carla {
 
     Write-Output "...Copy StartupFile..."
     #move-item .\CarlaUE4.download CarlaUE4.lnk
-    if (!(test-path "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
+    if (!(test-path "C:\Users\azureuser.DeepDriverVM\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
+    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
+    C:\Users\azureuser.DeepDriverVM\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+    C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 }
 
 # Function Set-Shortcut($RunPath, $Arguments, $ShortcutName, $ShortcutLocation){
