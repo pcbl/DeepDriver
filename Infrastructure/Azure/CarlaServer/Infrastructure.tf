@@ -149,7 +149,6 @@ resource "azurerm_windows_virtual_machine" "DeepDriverVM" {
             ],
             "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -file ./DeployPostConfig.ps1"
         }
-        Infrastructure/Azure/CarlaServer/Configuration/Gft.ini
 SETTINGS
 
     timeouts {
