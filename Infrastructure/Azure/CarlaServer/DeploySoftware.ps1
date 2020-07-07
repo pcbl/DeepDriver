@@ -25,8 +25,9 @@ function Install-Carla {
     Write-Output "...Copy Ini file..."
     Copy-item .\GFT.ini "C:\Temp\WindowsNoEditor\CarlaUE4\Config\GFT.ini"
 
-    #Write-Output "...Copy StartupFile file..."
+    Write-Output "...Copy StartupFile..."
     #move-item .\CarlaUE4.download CarlaUE4.lnk
+    if (!(test-path "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
     Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
 }
 
