@@ -64,6 +64,6 @@ Install-7zip
 Set-AutoLogon
 
 write-output "...Start Deploy Software..."
-start-process "powershell.exe" -ArgumentList "-ExecutionPolicy bypass -file .\DeploySoftware.ps1" -wait -NoNewWindow 
+start-process "powershell.exe" -ArgumentList "-ExecutionPolicy bypass -file .\DeploySoftware.ps1" -wait -NoNewWindow -ErrorAction Ignore
 
 Stop-Transcript
