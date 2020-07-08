@@ -67,3 +67,6 @@ write-output "...Start Deploy Software..."
 start-process "powershell.exe" -ArgumentList "-ExecutionPolicy bypass -file .\DeploySoftware.ps1" -wait -NoNewWindow -ErrorAction Ignore
 
 Stop-Transcript
+
+write-output "Restart Computer"
+Restart-Computer

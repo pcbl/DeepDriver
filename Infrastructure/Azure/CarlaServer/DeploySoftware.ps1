@@ -106,6 +106,3 @@ if ($Env -match "Client") {
 }
 
 Stop-Transcript
-
-write-output "Restart Computer"
-Restart-Computer
