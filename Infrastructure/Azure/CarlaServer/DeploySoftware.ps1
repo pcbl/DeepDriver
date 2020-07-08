@@ -78,7 +78,7 @@ function Set-SMI {
 
 Function Add-TaskScheduler ($Task) {
 
-    $action = New-ScheduledTaskAction -Execute 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' -Argument "-command `"Start-Process C:\Temp\WindowsNoEditor\CarlaUE4.exe -argumentlist `'-carla-settings=CarlaUE4\Config\GFT.ini'`""
+    $action = New-ScheduledTaskAction -Execute 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' -Argument "-command `"Start-Process C:\Temp\WindowsNoEditor\CarlaUE4.exe -argumentlist `'-carla-settings=C:\Temp\WindowsNoEditor\CarlaUE4\Config\GFT.ini'`""
     $Taskname = "Carla"
     $trigger1 = New-ScheduledTaskTrigger -AtLogOn
     $User = "azureuser"
