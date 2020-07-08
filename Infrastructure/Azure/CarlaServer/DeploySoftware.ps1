@@ -1,3 +1,7 @@
+param (
+    [String]$Env = ""
+)
+
 function Install-Carla {
 
     write-output "Download Carla..."
@@ -25,43 +29,7 @@ function Install-Carla {
     Write-Output "...Copy Ini file..."
     Copy-item .\GFT.ini "C:\Temp\WindowsNoEditor\CarlaUE4\Config\GFT.ini"
 
-    Write-Output "...Copy StartupFile..."
-    #move-item .\CarlaUE4.download CarlaUE4.lnk
-    if (!(test-path "$env:USERPROFILE\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "$env:USERPROFILE\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "$env:USERPROFILE\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
-
-    if (!(test-path "C:\Users\azureuser.DeepDriverVM\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
-
-    if (!(test-path "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
-
-    if (!(test-path "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.000\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
-    
-    if (!(test-path "C:\Users\azureuser.DeepDriverVM.001\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.001\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.001\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
-
-    if (!(test-path "C:\Users\azureuser.DeepDriverVM.002\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.002\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.002\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
-
-    if (!(test-path "C:\Users\azureuser.DeepDriverVM.003\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")) {New-item "C:\Users\azureuser.DeepDriverVM.003\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -itemtype Directory }
-    Copy-item ".\CarlaUE4.lnk" "C:\Users\azureuser.DeepDriverVM.003\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\CarlaUE4.lnk"
 }
-
-# Function Set-Shortcut($RunPath, $Arguments, $ShortcutName, $ShortcutLocation){
-
-#     write-output "Copy Icon Carla to StartUp"
-#     $WScriptShell = New-Object -ComObject WScript.Shell
-#     $Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation + $ShortcutName + '.lnk')
-#     $Shortcut.Targetpath = -join($RunPath,"\CarlaUE4.exe")
-#     $Shortcut.Arguments = [string]$Arguments
-#     $Shortcut.WorkingDirectory = $RunPath
-#     $Shortcut.IconLocation = -join($RunPath,"\CarlaUE4.exe",", 0")
-#     $Shortcut.Save()
-
-#     Write-Host "`nShortcut created at "$ShortcutLocation$ShortcutName'.lnk'
-# }
 
 function Install-Nvidea {
     write-output "Download Nvidea"
@@ -108,23 +76,36 @@ function Set-SMI {
      .\nvidia-smi.exe -g 00000001:00:00.0 -dm 0
 }
 
+Function Add-TaskScheduler ($Task) {
+
+    $action = New-ScheduledTaskAction -Execute 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' -Argument "-command `"Start-Process C:\Temp\WindowsNoEditor\CarlaUE4.exe -argumentlist `'-carla-settings=CarlaUE4\Config\GFT.ini'`""
+    $Taskname = "Carla"
+    $trigger1 = New-ScheduledTaskTrigger -AtLogOn
+    $User = "azureuser"
+    $Principal = New-ScheduledTaskPrincipal -UserId $User -LogonType Interactive -RunLevel Highest
+    Register-ScheduledTask -Action $action -Trigger @($trigger1) -TaskName "$Taskname" -Principal $Principal
+
+}
+
 Start-Transcript "C:\Temp\CarlaServer-DeploySoftware.log"
 $global:ProgressPreference = 'SilentlyContinue'
 
-Install-Carla
-Install-Nvidea
-Install-VCRedist
-Install-directX
-Set-SMI
+if ($Env -match "Client") {
+    choco install anaconda3 -y
+    pip install --user pygame numpy
 
-# $DefaultFileName = "C:\Temp\WindowsNoEditor\CarlaUE4.exe"
-# $Runapppath = "C:\Temp\WindowsNoEditor"
+} else {
 
-# Set-Shortcut $Runapppath $DefaultFileName "CarlaUE4ShortCut" "C:\Users\azureuser\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\"
+    Install-Carla
+    Install-Nvidea
+    Install-VCRedist
+    Install-directX
+    Set-SMI
+    Add-TaskScheduler
 
-# Install-Anaconda
+}
+
 Stop-Transcript
-
 
 write-output "Restart Computer"
 Restart-Computer

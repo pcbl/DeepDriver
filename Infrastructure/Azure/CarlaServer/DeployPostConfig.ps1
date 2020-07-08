@@ -1,4 +1,17 @@
 
+function Set-OSConfig {
+
+Write-Output '...Set Timezone...'
+Set-TimeZone -name "W. Europe Standard Time"
+Write-Output '...Sync Time...'
+w32tm /resync | Out-Null
+Write-Output '...set local System language...'
+set-WinSystemLocale de-DE   
+Write-Output '...set Keyboardsprache...'
+Set-WinUserLanguageList -LanguageList DE-DE -Force
+
+} 
+
 function Install-Choco {
     write-output "...Install Chocolatey..."
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -44,11 +57,11 @@ function Set-AutoLogon {
 Start-Transcript "C:\Temp\CarlaServer-DeployPostConfig.log"
 $global:ProgressPreference = 'SilentlyContinue'
 
+Set-OSConfig
 Install-Choco
 Set-WINRM
 Install-7zip
 Set-AutoLogon
-
 
 write-output "...Start Deploy Software..."
 start-process "powershell.exe" -ArgumentList "-ExecutionPolicy bypass -file .\DeploySoftware.ps1" -wait -NoNewWindow 
