@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: carla-server
+  name: carla-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: carla-server  
+  template:
+    metadata:
+      labels:
+        app: carla-server
+    spec:
+      containers:
+      - name: carla-server
+        image: carlasim/carla        
+        #--quality-level=Epic for best resolution, lower frame rates...
+        args: ["/bin/bash","CarlaUE4.sh","--quality-level=Low"]
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+           nvidia.com/gpu: 1
+        ports:
+        - containerPort: 2000
+        - containerPort: 2001
+        - containerPort: 2002           
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: carla-service
+spec:
+    type: LoadBalancer
+    ports:
+    - port: 2000
+      name: 2000-carla
+    - port: 2001
+      name: 2001-carla
+    - port: 2002    
+      name: 2002-carla
+    selector:
+      app: carla-server     

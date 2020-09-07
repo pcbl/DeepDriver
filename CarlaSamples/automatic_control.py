@@ -781,7 +781,7 @@ def main():
     argparser.add_argument(
         '--host',
         metavar='H',
-        default='127.0.0.1',
+        default='deepdriver.westeurope.cloudapp.azure.com',
         help='IP of the host server (default: 127.0.0.1)')
     argparser.add_argument(
         '-p', '--port',
@@ -792,7 +792,7 @@ def main():
     argparser.add_argument(
         '--res',
         metavar='WIDTHxHEIGHT',
-        default='1280x720',
+        default='800x600',
         help='Window resolution (default: 1280x720)')
     argparser.add_argument(
         '--filter',

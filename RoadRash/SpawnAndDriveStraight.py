@@ -63,6 +63,11 @@ def game_loop(args):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
+                if event.type == pygame.KEYDOWN:
+                   if event.key == pygame.K_RIGHT:
+                       world.camera_manager.next_sensor();   
+                   if event.key == pygame.K_LEFT:
+                       world.camera_manager.previous_sensor();   
                 
             # As soon as the server is ready continue!
             if not world.world.wait_for_tick(10.0):
@@ -108,7 +113,7 @@ def main():
         metavar='H',
         #default='127.0.0.1',
         #default='nvidiaairsim.westeurope.cloudapp.azure.com',
-        default='51.145.143.159',
+        default='localhost',
         help='IP of the host server (default: 127.0.0.1)')
     argparser.add_argument(
         '-p', '--port',

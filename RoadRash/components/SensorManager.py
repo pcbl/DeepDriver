@@ -126,6 +126,11 @@ class SensorManager(object):
     def next_sensor(self):
         """Get the next sensor"""
         self.set_sensor(self.index + 1)
+        
+    def previous_sensor(self):
+        """Get the previous sensor"""
+        if(self.index>0):
+            self.set_sensor(self.index - 1)        
 
     def render(self, display):
         """Render method"""

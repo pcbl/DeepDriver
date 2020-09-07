@@ -24,7 +24,7 @@ import cv2
 sio = socketio.Server()
  
 app = Flask(__name__) #'__main__'
-speed_limit = 10
+speed_limit = 20
 def img_preprocess(img):
     img = img[60:135,:,:]
     img = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)

@@ -29,23 +29,42 @@ except IndexError:
     pass
 
 import carla
-import random
-import time
 import numpy as np
 import cv2
-
+import threading
+from carla import ColorConverter as cc
 IM_WIDTH = 640
 IM_HEIGHT = 480
 
-def process_img(image):
-    i = np.array(image.raw_data)
-    i2 = i.reshape((IM_HEIGHT, IM_WIDTH, 4))
-    i3 = i2[:, :, :3]
-    cv2.imshow("", i3)
-    cv2.waitKey(1)
-    return i3/255.0
-
-
+def process_img(image, sensor_data):
+    if sensor_data[0].startswith('sensor.lidar'):        
+        lidar_range = 2.0*float(50)
+        points = np.frombuffer(image.raw_data, dtype=np.dtype('f4'))
+        points = np.reshape(points, (int(points.shape[0] / 4), 4))
+        lidar_data = np.array(points[:, :2])
+        lidar_data *= IM_HEIGHT / lidar_range
+        lidar_data += (0.5 * IM_WIDTH, 0.5 * IM_HEIGHT)
+        lidar_data = np.fabs(lidar_data)  # pylint: disable=E1111
+        lidar_data = lidar_data.astype(np.int32)
+        lidar_data = np.reshape(lidar_data, (-1, 2))
+        lidar_img_size = (IM_WIDTH, IM_HEIGHT, 3)
+        lidar_img = np.zeros((lidar_img_size), dtype=np.uint8)
+        img_to_show = lidar_img.swapaxes(0, 1)                
+    else:
+        image.convert(sensor_data[1])
+        i = np.array(image.raw_data)
+        i2 = i.reshape((IM_HEIGHT, IM_WIDTH, 4))
+        i3 = i2[:, :, :3]
+        i3 = i3[:, :, ::-1]
+        img_to_show = i3
+        
+    sensor_data[3].acquire()
+    try:
+        cv2.imshow(sensor_data[2], img_to_show)    
+        cv2.waitKey(1)
+    finally:
+        sensor_data[3].release() # release lock, no matter what   
+    
 
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -116,7 +135,7 @@ def detect_lanes(raw_image):
     #Hough Tranform to detect lines
     lines = cv2.HoughLinesP(cropped_image, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)    
     if lines is None:
-        cv2.imshow('lanes',frame_image)    
+        combo_image= frame_image
     else:
         #Taking one left and right line by averaging the found lines into a single 1
         averaged_lines = average_slope_intercept(frame_image, lines)
@@ -124,8 +143,7 @@ def detect_lanes(raw_image):
         line_image = display_lines(frame_image, averaged_lines)
         #And wwe add some overlay on top of the original image
         combo_image = cv2.addWeighted(frame_image, 0.8, line_image, 1, 1)
-        cv2.imshow('lanes',combo_image)    
-        
+    cv2.imshow('lanes',combo_image)    
     # wait 1 millisecond or until q is pressed
     if cv2.waitKey(1) == ord('q'):        
         destroy_and_quit()        
@@ -139,7 +157,7 @@ def destroy_and_quit():
 
 actor_list = []
 try:
-    client = carla.Client('13.93.27.227', 2000)
+    client = carla.Client('deepdriver.westeurope.cloudapp.azure.com', 2000)
     client.set_timeout(2.0)
 
     world = client.get_world()
@@ -153,42 +171,61 @@ try:
 
     vehicle = world.spawn_actor(bp, spawn_point)
         
-    #vehicle.set_autopilot(True)  # if you just wanted some NPCs to drive.
+    vehicle.set_autopilot(True)  # if you just wanted some NPCs to drive.
 
     actor_list.append(vehicle)
     
-
-    # https://carla.readthedocs.io/en/latest/cameras_and_sensors
-    # get the blueprint for this sensor
-    blueprint = blueprint_library.find('sensor.camera.rgb')
-    # change the dimensions of the image
-    blueprint.set_attribute('image_size_x', f'{IM_WIDTH}')
-    blueprint.set_attribute('image_size_y', f'{IM_HEIGHT}')
-    blueprint.set_attribute('fov', '110')
-    blueprint.set_attribute('sensor_tick', '0')
-    
-
     # Adjust sensor relative to vehicle
     spawn_point = carla.Transform(carla.Location(x=2.5, z=0.7))
-
+    
+    '''
+    sensors = [
+            ['sensor.camera.rgb', cc.Raw, 'RGB', threading.RLock()],
+          #  ['sensor.camera.depth', cc.Raw, 'Depth_Raw', threading.RLock()],
+            #['sensor.camera.depth', cc.Depth, 'Depth_Gray)', threading.RLock()],
+            #['sensor.camera.depth', cc.LogarithmicDepth, 'Depth_Log', threading.RLock()],
+            #['sensor.camera.semantic_segmentation', cc.Raw, 'Segmentation_Raw', threading.RLock()],
+            #['sensor.camera.semantic_segmentation', cc.CityScapesPalette,'Segmentation_CityScapes', threading.RLock()],
+            #['sensor.lidar.ray_cast', None, 'Lidar', threading.Lock()]
+            ]
+    
+    for sensor in sensors:
+        sensor_blue_print = blueprint_library.find(sensor[0])
+        if sensor[0].startswith('sensor.camera'):
+            sensor_blue_print.set_attribute('image_size_x', str(IM_WIDTH))
+            sensor_blue_print.set_attribute('image_size_y', str(IM_HEIGHT))
+            if sensor_blue_print.has_attribute('gamma'):
+                sensor_blue_print.set_attribute('gamma', str(2.2))#default game 2.2...
+        elif sensor[0].startswith('sensor.lidar'):
+            sensor_blue_print.set_attribute('range', '50')
+        #sensor_blue_print.set_attribute('fov', '110') # Field of View
+        sensor_blue_print.set_attribute('sensor_tick', '0')  
+        sensor_instance = world.spawn_actor(sensor_blue_print, spawn_point, attach_to=vehicle)
+        actor_list.append(sensor_instance)# Add to this list to remove later
+        sensor_instance.listen(lambda data: process_img(data,sensor))            
+'''
+    # https://carla.readthedocs.io/en/latest/cameras_and_sensors
+    # get the blueprint for this sensor
+    lanesCamera = blueprint_library.find('sensor.camera.rgb')
+    # change the dimensions of the image
+    lanesCamera.set_attribute('image_size_x', f'{IM_WIDTH}')
+    lanesCamera.set_attribute('image_size_y', f'{IM_HEIGHT}')
+    lanesCamera.set_attribute('fov', '110')
+    lanesCamera.set_attribute('sensor_tick', '0')
+    
+    
     # spawn the sensor and attach to vehicle.
-    sensor = world.spawn_actor(blueprint, spawn_point, attach_to=vehicle)
+    lanesCameraSensor = world.spawn_actor(lanesCamera, spawn_point, attach_to=vehicle)
 
     # add sensor to list of actors
-    actor_list.append(sensor)
+    actor_list.append(lanesCameraSensor)
 
     # do something with this sensor
-    sensor.listen(lambda data: detect_lanes(data))
-
-   # vehicle.apply_control(carla.VehicleControl(throttle=0.5, steer=0.0))
- #   time.sleep(5)
- #   vehicle.apply_control(carla.VehicleControl(throttle=.3, steer=1.0))
-  #  time.sleep(5)
-  #  vehicle.apply_control(carla.VehicleControl(throttle=.5, steer=0))
+    lanesCameraSensor.listen(lambda data: detect_lanes(data))
 
     while True:      
         # As soon as the server is ready continue!
-        vehicle.apply_control(carla.VehicleControl(throttle=.2, steer=0.0))
+     #   vehicle.apply_control(carla.VehicleControl(throttle=.2, steer=0.0))
         if not world.wait_for_tick(1):
             continue
         # as soon as the server is ready continue!
